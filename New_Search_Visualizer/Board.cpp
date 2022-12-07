@@ -251,7 +251,7 @@ void Board::BreadthFirstSearch()
 
 			for (Cell* child : children)
 			{
-				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end())
+				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end() || *child == *start)
 				{
 					continue;
 				}
@@ -268,8 +268,9 @@ void Board::BreadthFirstSearch()
 				else
 				{
 					if (child->parent == nullptr) { child->parent = CURRENT; }
+
+					if(find(Q.begin(), Q.end(), child) == Q.end()) { Q.push_back(child); } // if child not in Q
 					
-					Q.push_back(child);
 					child->set_color(SKYBLUE, "SKYBLUE");
 
 					child->display_cell();
