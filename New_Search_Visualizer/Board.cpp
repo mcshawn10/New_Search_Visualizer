@@ -279,6 +279,11 @@ void Board::BreadthFirstSearch()
 
 }
 
+void Board::Dijkstra()
+{
+
+}
+
 void Board::RUN()
 {
 	InitWindow(width, height, "New Search Algorithm Visualizer");

@@ -39,6 +39,7 @@ public:
 	void CLEAR_SEARCH();
 	void find_path();
 	void BreadthFirstSearch();
+	void Dijkstra();
 	void set_start();
 	void set_goal();
 
