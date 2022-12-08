@@ -1,7 +1,7 @@
 #pragma once
 #include "stl_inc.h"
 #include "raylib.h"
-
+#include <cstdlib>
 
 class Cell
 {
@@ -34,5 +34,6 @@ public:
 	bool operator!=(const Cell& other) const;
 	bool operator < (const Cell& other) const;
 	bool operator > (const Cell& other) const;
+	int operator - (Cell& other);
 	~Cell();
 };

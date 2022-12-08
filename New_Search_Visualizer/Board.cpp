@@ -9,6 +9,7 @@
 #include <cassert>
 #include <set>
 #include <limits>
+#include <set>
 //#include <Windows.h>
 
 
@@ -288,18 +289,30 @@ void Board::Dijkstra()
 	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
 
 	vector <Cell*> CLOSED;
+	vector <Cell*> visited;
 
 	start->Hscore = 0;
 
-	OPEN.push(start);
+	for (int r = 0; r < 25; r++)
+	{
+		for (int c = 0; c < 60; c++)
+		{
+			OPEN.push(&blocks[r][c]);
+		}
+	}
+
+	//OPEN.push(start);
 
 	vector <Cell*> children;
 
 	while (!OPEN.empty())
 	{
-		Cell* CURRENT = OPEN.top();
-		CLOSED.push_back(CURRENT);
+		Cell* CURRENT = OPEN.top();		
 		OPEN.pop();
+
+
+		visited.push_back(CURRENT);
+
 
 		if (CURRENT == goal)
 		{
@@ -307,9 +320,10 @@ void Board::Dijkstra()
 			break;
 		}
 
-		else //  if (find(CLOSED.begin(), CLOSED.end(), CURRENT) == CLOSED.end()) // if Current NOT in visited
+		else if (find(visited.begin(), visited.end(), CURRENT) == visited.end()) // if Current NOT in visited
 		{
-			CLOSED.push_back(CURRENT);
+			cout << CURRENT->Hscore << " $" << endl;
+			
 
 			int r_temp = CURRENT->row;
 			int c_temp = CURRENT->col;
@@ -344,37 +358,49 @@ void Board::Dijkstra()
 
 			for (Cell* child : children)
 			{
-				if (child->color_string == "BLACK" || find(CLOSED.begin(), CLOSED.end(), child) != CLOSED.end())
-				{
-					continue;
-				}
 
-				int new_dist = CURRENT->Hscore + CURRENT->m_dist(child);
+				int real_dist = *start - *child;
+				int weight = CURRENT->m_dist(child);
+
+				int new_dist = real_dist + weight;
+
+
 				cout << new_dist << endl;
-				assert(new_dist < child->Hscore)
+				//assert(new_dist < child->Hscore);
 
-;				if (new_dist < child->Hscore)
+
+				if (child->color_string == "BLACK") continue; // || find(CLOSED.begin(), CLOSED.end(), child) != CLOSED.end()) { continue; }
+
+				else if (new_dist < CURRENT->Hscore && find(CLOSED.begin(), CLOSED.end(), child) == CLOSED.end())
 				{
-					child->Hscore = new_dist;
-					OPEN.push(child);
+					cout << "working" << endl;
+					CURRENT->Hscore = new_dist;
+
 					child->parent = CURRENT;
 
-					if (child == goal)
+
+
+
+					/*if (child == goal)
 					{
 						found = true;
 						break;
-					}
+					}*/
 
-					else if (child->color_string != "RED" && child->color_string != "GREEN")
+					if (child->color_string != "RED" && child->color_string != "GREEN")
 					{
+						cout << "reached" << endl;
 						child->set_color(SKYBLUE, "SKYBLUE");
 						child->display_cell();
 					}
 				}
 
+				else continue;
+
 			}
 
 		}
+		else continue;
 		
 	}
 	find_path();

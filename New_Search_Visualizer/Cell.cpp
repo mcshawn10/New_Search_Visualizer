@@ -1,7 +1,7 @@
 #include "raylib.h"
 #include "stl_inc.h"
 #include "Cell.h"
-
+#include <cstdlib>
 
 
 
@@ -15,7 +15,7 @@ Cell::Cell()
 	this->parent = nullptr;
 	Fscore = 0;
 	Gscore = 0;
-	Hscore = std::numeric_limits<int>::max();
+	Hscore = 10000;
 
 }
 
@@ -52,7 +52,7 @@ void Cell::display_cell()
 
 int Cell::m_dist(Cell* other)
 {
-	return abs(this->row - other->row) + abs(this->col - other->col);
+	return std::abs(this->row - other->row) + std::abs(this->col - other->col);
 }
 
 Cell& Cell::operator=(const Cell& other)
@@ -74,9 +74,16 @@ bool Cell::operator==(const Cell& other) const
 	else return false;
 }
 
+int Cell::operator-(Cell& other)
+{
+	
+	return std::abs(this->row - other.row) + std::abs(this->col - other.col);
+}
+
 bool Cell::operator!=(const Cell& other) const
 {
-	if (this->row != other.row && this->col != other.col && this->parent != other.parent) return true;
+	//if (this->row != other.row && this->col != other.col && this->parent != other.parent) return true;
+	if (this->row != other.row && this->col != other.col) return true;
 	else return false;
 }
 
