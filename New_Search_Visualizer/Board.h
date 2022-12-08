@@ -21,6 +21,7 @@ private:
 	Button goal_button;
 	Button clear_board;
 	Button clear_search;
+	Button D_button;
 	Button BFS_button;
 
 public:

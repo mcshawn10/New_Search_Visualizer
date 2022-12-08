@@ -30,6 +30,7 @@ Board::Board()
 	goal_button = Button("Goal Cell", 350, 50, 300, 50);
 	clear_board = Button("Clear Board", 800, 50, 350, 50);
 	clear_search = Button("Clear Search", 800, 100, 350, 50);
+	D_button = Button("Dijkstra", 400, 150, 250, 50);
 	BFS_button = Button("BFS", 700, 150, 250, 50);
 
 	for (int row = 0;row<this->rows; row++)
@@ -306,7 +307,7 @@ void Board::Dijkstra()
 			break;
 		}
 
-		else if (find(CLOSED.begin(), CLOSED.end(), CURRENT) == CLOSED.end()) // if Current NOT in visited
+		else //  if (find(CLOSED.begin(), CLOSED.end(), CURRENT) == CLOSED.end()) // if Current NOT in visited
 		{
 			CLOSED.push_back(CURRENT);
 
@@ -349,8 +350,10 @@ void Board::Dijkstra()
 				}
 
 				int new_dist = CURRENT->Hscore + CURRENT->m_dist(child);
+				cout << new_dist << endl;
+				assert(new_dist < child->Hscore)
 
-				if (new_dist < child->Hscore)
+;				if (new_dist < child->Hscore)
 				{
 					child->Hscore = new_dist;
 					OPEN.push(child);
@@ -372,6 +375,7 @@ void Board::Dijkstra()
 			}
 
 		}
+		
 	}
 	find_path();
 }
@@ -381,7 +385,7 @@ void Board::RUN()
 	InitWindow(width, height, "New Search Algorithm Visualizer");
 	SetTargetFPS(fps);
 
-	Button button_list[5] = { this->start_button, this->goal_button, this->clear_board, this->clear_search, this->BFS_button };
+	Button button_list[6] = { this->start_button, this->goal_button, this->clear_board, this->clear_search, this->D_button, this->BFS_button };
 
 	while (!WindowShouldClose()) // while loop that controls the rest
 	{
@@ -402,16 +406,19 @@ void Board::RUN()
 		this->clear_search.draw_box();
 		this->clear_search.draw_text();
 
+		this->D_button.draw_box();
+		this->D_button.draw_text();
+
 		this->BFS_button.draw_box();
 		this->BFS_button.draw_text();
 
 		///*
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			if (CheckCollisionPointRec(GetMousePosition(), button_list[i].textbox)) button_list[i].mouseOn = true;
 			else  button_list[i].mouseOn = false;
 		}
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 6; i++)
 		{
 			if (button_list[i].mouseOn)
 			{
@@ -437,7 +444,9 @@ void Board::RUN()
 
 			else if (CheckCollisionPointRec(GetMousePosition(), button_list[3].textbox)) this->CLEAR_SEARCH();
 
-			else if (CheckCollisionPointRec(GetMousePosition(), button_list[4].textbox)) this->BreadthFirstSearch();
+			else if (CheckCollisionPointRec(GetMousePosition(), button_list[4].textbox)) this->Dijkstra();
+
+			else if (CheckCollisionPointRec(GetMousePosition(), button_list[5].textbox)) this->BreadthFirstSearch();
 		}
 
 

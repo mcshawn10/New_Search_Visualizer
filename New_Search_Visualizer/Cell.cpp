@@ -50,9 +50,9 @@ void Cell::display_cell()
 	DrawRectangle(this->col * 20 + 1, this->row * 20 + 202, this->size, this->size, this->color);
 }
 
-int Cell::m_dist(Cell& other)
+int Cell::m_dist(Cell* other)
 {
-	return abs(this->row - other.row) + abs(this->col - other.col);
+	return abs(this->row - other->row) + abs(this->col - other->col);
 }
 
 Cell& Cell::operator=(const Cell& other)
