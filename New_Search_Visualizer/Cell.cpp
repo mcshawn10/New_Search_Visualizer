@@ -13,6 +13,9 @@ Cell::Cell()
 	this->row = 0;
 	this->col = 0;
 	this->parent = nullptr;
+	Fscore = 0;
+	Gscore = 0;
+	Hscore = std::numeric_limits<int>::max();
 
 }
 
@@ -45,6 +48,11 @@ string Cell::get_color() { return this->color_string; }
 void Cell::display_cell()
 {
 	DrawRectangle(this->col * 20 + 1, this->row * 20 + 202, this->size, this->size, this->color);
+}
+
+int Cell::m_dist(Cell& other)
+{
+	return abs(this->row - other.row) + abs(this->col - other.col);
 }
 
 Cell& Cell::operator=(const Cell& other)

@@ -15,6 +15,9 @@ public:
 	int counter = 0;
 	int row = 0;
 	int col = 0;
+	int Fscore;
+	int Gscore;
+	int Hscore;
 	Color color = WHITE;
 	string color_string = "WHITE";
 	Cell* parent;
@@ -24,6 +27,8 @@ public:
 	void set_color(Color c, string clr_str);
 	string get_color();
 	void display_cell();
+
+	int m_dist(Cell* other);
 	Cell& operator=(const Cell& other);
 	bool operator==(const Cell& other) const;
 	bool operator!=(const Cell& other) const;

@@ -8,6 +8,7 @@
 #include <memory>
 #include <cassert>
 #include <set>
+#include <limits>
 //#include <Windows.h>
 
 
@@ -281,7 +282,98 @@ void Board::BreadthFirstSearch()
 
 void Board::Dijkstra()
 {
+	
+	auto compare = [](Cell* mine, Cell* other) {return mine->Hscore > other->Hscore; };
+	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
 
+	vector <Cell*> CLOSED;
+
+	start->Hscore = 0;
+
+	OPEN.push(start);
+
+	vector <Cell*> children;
+
+	while (!OPEN.empty())
+	{
+		Cell* CURRENT = OPEN.top();
+		CLOSED.push_back(CURRENT);
+		OPEN.pop();
+
+		if (CURRENT == goal)
+		{
+			found = true;
+			break;
+		}
+
+		else if (find(CLOSED.begin(), CLOSED.end(), CURRENT) == CLOSED.end()) // if Current NOT in visited
+		{
+			CLOSED.push_back(CURRENT);
+
+			int r_temp = CURRENT->row;
+			int c_temp = CURRENT->col;
+
+			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
+			{
+				Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
+				children.push_back(temp_1); // COPY constructor, pass by reference
+
+			}
+
+			if (0 <= c_temp - 1)
+			{
+				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+				children.push_back(temp_3);
+
+			}
+
+			if (0 <= r_temp - 1)
+			{
+				Cell* temp_2 = &blocks[r_temp - 1][c_temp];
+				children.push_back(temp_2);
+
+			}
+
+			if (c_temp + 1 <= 59)
+			{
+				Cell* temp_4 = &blocks[r_temp][c_temp + 1];
+				children.push_back(temp_4);
+
+			}
+
+			for (Cell* child : children)
+			{
+				if (child->color_string == "BLACK" || find(CLOSED.begin(), CLOSED.end(), child) != CLOSED.end())
+				{
+					continue;
+				}
+
+				int new_dist = CURRENT->Hscore + CURRENT->m_dist(child);
+
+				if (new_dist < child->Hscore)
+				{
+					child->Hscore = new_dist;
+					OPEN.push(child);
+					child->parent = CURRENT;
+
+					if (child == goal)
+					{
+						found = true;
+						break;
+					}
+
+					else if (child->color_string != "RED" && child->color_string != "GREEN")
+					{
+						child->set_color(SKYBLUE, "SKYBLUE");
+						child->display_cell();
+					}
+				}
+
+			}
+
+		}
+	}
+	find_path();
 }
 
 void Board::RUN()
