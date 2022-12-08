@@ -108,28 +108,28 @@ void Board::set_goal()
 void Board::find_path()
 {
 	Cell* p = this->goal;
-	vector<Cell*> path;
+	
 
 	if (this->found)
 	{
 		while (*p != *start)
 		{
-			path.push_back(p);
+
+			if (p->get_color() != "GREEN" && p->get_color() != "RED")
+			{
+				p->set_color(YELLOW, "YELLOW");
+
+				p->display_cell();
+
+			
+			}
 
 			p = p->parent;
+			
+
 		}
-		cout << path.size() << endl;
-		for (Cell* i : path)
-		{
-			if (i->get_color() != "GREEN" && i->get_color() != "RED")
-			{
-				i->set_color(YELLOW, "YELLOW");
-				
-				i->display_cell();
-				
-				//Sleep(500);
-			}
-		}
+
+		
 	}
 	else
 	{
@@ -191,15 +191,14 @@ void Board::BreadthFirstSearch()
 	
 	/*visited and Q shouldnt be wasting space storing duplicates*/
 
-	Q.push_front(start);
+	Q.push_back(start);
 
 	while (!Q.empty())
 	{	
 		
 		Cell* CURRENT = Q.front(); // invokes copy constructor or move?
 		Q.pop_front();
-
-
+		
 		
 		if (CURRENT == this->goal)
 		{
@@ -207,11 +206,7 @@ void Board::BreadthFirstSearch()
 			this->found = true;
 			Q.clear();
 		}
-		/*
-		if (find(visited.begin(), visited.end(), CURRENT) != visited.end()) // if Current in visited continue
-		{
-			continue;
-		}*/
+		
 		else if (find(visited.begin(), visited.end(), CURRENT) == visited.end()) // if Current NOT in visited
 		{
 			visited.push_back(CURRENT);
@@ -219,15 +214,20 @@ void Board::BreadthFirstSearch()
 			int r_temp = CURRENT->row;
 			int c_temp = CURRENT->col;
 
-			
-
-
 			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
 			{
 				Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
 				children.push_back(temp_1); // COPY constructor, pass by reference
 
 			}
+			
+			if (0 <= c_temp - 1)
+			{
+				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+				children.push_back(temp_3);
+
+			}
+
 			if (0 <= r_temp - 1)
 			{
 				Cell* temp_2 = &blocks[r_temp - 1][c_temp];
@@ -235,12 +235,6 @@ void Board::BreadthFirstSearch()
 
 			}
 
-			if (0 <= c_temp - 1)
-			{
-				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
-				children.push_back(temp_3);
-
-			}
 			if (c_temp + 1 <= 59)
 			{
 				Cell* temp_4 = &blocks[r_temp][c_temp + 1];
@@ -250,28 +244,20 @@ void Board::BreadthFirstSearch()
 
 			for (Cell* child : children)
 			{
-				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end())
+
+				if (child->color_string == "BLACK" || (find(visited.begin(), visited.end(), child) != visited.end()))
 				{
 					continue;
 				}
-				/*
-				else if (*child == *goal)
-				{
-					this->found = true;
-					child->parent = CURRENT;
-					Q.clear(); // clearn priority queue
-
-					//	break;
-
-				}*/
+				
 
 				else //if (child->get_color() != "GREEN" && child->get_color() != "RED")
 				{
-					if (child->parent == nullptr) { child->parent = CURRENT; }
-					//child->parent = CURRENT;
+					//if (child->parent == nullptr) { child->parent = CURRENT; }
+					child->parent = CURRENT;
 
-					//if (find(Q.begin(), Q.end(), child) == Q.end()) { Q.push_back(child); } // if child not in Q
-					Q.push_back(child);
+					if (find(Q.begin(), Q.end(), child) == Q.end()) { Q.push_back(child); } // if child not in Q
+					
 					child->set_color(SKYBLUE, "SKYBLUE");
 
 					child->display_cell();
@@ -285,11 +271,6 @@ void Board::BreadthFirstSearch()
 		}
 		else continue;
 	}
-	//visited.clear();
-
-	//vector<Cell*>().swap(visited);
-	//vector<Cell*>().swap(children);
-
 	find_path();
 
 	visited.clear();
