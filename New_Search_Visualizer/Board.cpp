@@ -8,6 +8,7 @@
 #include <memory>
 #include <cassert>
 #include <set>
+//#include <Windows.h>
 
 
 Board::Board()
@@ -117,14 +118,16 @@ void Board::find_path()
 
 			p = p->parent;
 		}
-
+		cout << path.size() << endl;
 		for (Cell* i : path)
 		{
-			if (i->get_color() != "RED" && i->get_color() != "GREEN")
+			if (i->get_color() != "GREEN" && i->get_color() != "RED")
 			{
 				i->set_color(YELLOW, "YELLOW");
 				
 				i->display_cell();
+				
+				//Sleep(500);
 			}
 		}
 	}
@@ -186,7 +189,7 @@ void Board::BreadthFirstSearch()
 	vector<Cell*> children;
 	vector<Cell*> visited;
 	
-	/*visited and Q should be wasting space storing duplicates*/
+	/*visited and Q shouldnt be wasting space storing duplicates*/
 
 	Q.push_front(start);
 
@@ -200,13 +203,15 @@ void Board::BreadthFirstSearch()
 		
 		if (CURRENT == this->goal)
 		{
+
 			this->found = true;
-			break;
+			Q.clear();
 		}
+		/*
 		if (find(visited.begin(), visited.end(), CURRENT) != visited.end()) // if Current in visited continue
 		{
 			continue;
-		}
+		}*/
 		else if (find(visited.begin(), visited.end(), CURRENT) == visited.end()) // if Current NOT in visited
 		{
 			visited.push_back(CURRENT);
@@ -217,44 +222,39 @@ void Board::BreadthFirstSearch()
 			
 
 
-			if (0 <= r_temp + 1 && r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
+			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
 			{
 				Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
 				children.push_back(temp_1); // COPY constructor, pass by reference
 
-			
-
 			}
-			if (0 <= r_temp - 1 && r_temp - 1 <= 24)
+			if (0 <= r_temp - 1)
 			{
 				Cell* temp_2 = &blocks[r_temp - 1][c_temp];
 				children.push_back(temp_2);
 
-				
-
 			}
 
-			if (0 <= c_temp - 1 && c_temp - 1 <= 59)
+			if (0 <= c_temp - 1)
 			{
 				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
 				children.push_back(temp_3);
 
-				
 			}
-			if (0 <= c_temp + 1 && c_temp + 1 <= 59)
+			if (c_temp + 1 <= 59)
 			{
 				Cell* temp_4 = &blocks[r_temp][c_temp + 1];
 				children.push_back(temp_4);
 
-				
 			}
 
 			for (Cell* child : children)
 			{
-				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end() || *child == *start)
+				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end())
 				{
 					continue;
 				}
+				/*
 				else if (*child == *goal)
 				{
 					this->found = true;
@@ -262,19 +262,21 @@ void Board::BreadthFirstSearch()
 					Q.clear(); // clearn priority queue
 
 					//	break;
-					
-				}
 
-				else
+				}*/
+
+				else //if (child->get_color() != "GREEN" && child->get_color() != "RED")
 				{
 					if (child->parent == nullptr) { child->parent = CURRENT; }
+					//child->parent = CURRENT;
 
-					if(find(Q.begin(), Q.end(), child) == Q.end()) { Q.push_back(child); } // if child not in Q
-					
+					//if (find(Q.begin(), Q.end(), child) == Q.end()) { Q.push_back(child); } // if child not in Q
+					Q.push_back(child);
 					child->set_color(SKYBLUE, "SKYBLUE");
 
 					child->display_cell();
 				}
+				
 			}
 
 
@@ -283,12 +285,16 @@ void Board::BreadthFirstSearch()
 		}
 		else continue;
 	}
-	visited.clear();
+	//visited.clear();
 
-	vector<Cell*>().swap(visited);
-	vector<Cell*>().swap(children);
+	//vector<Cell*>().swap(visited);
+	//vector<Cell*>().swap(children);
 
 	find_path();
+
+	visited.clear();
+	children.clear();
+
 
 }
 
