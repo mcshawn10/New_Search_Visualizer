@@ -110,21 +110,14 @@ void Board::set_goal()
 
 void Board::find_path()
 {
+	//Cell* p = new Cell(*goal);
 	Cell* p = goal;
-	
-
+	assert(p != nullptr);
 	if (found)
 	{
 		while (p != nullptr)
 		{
-			//cout << &p << endl;
-			/*if (p->get_color() != "GREEN" && p->get_color() != "RED")
-			{
-				p->set_color(YELLOW, "YELLOW");
-
-				p->display_cell();
-
-			}*/
+			
 			p->set_color(YELLOW, "YELLOW");
 
 			p->display_cell();
@@ -140,7 +133,7 @@ void Board::find_path()
 		cout << "Path not found" << "\n";
 	}
 
-
+	//delete p;
 }
 
 void Board::draw_obstacles(pair<int,int> p)
