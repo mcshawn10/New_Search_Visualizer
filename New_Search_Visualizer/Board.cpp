@@ -113,25 +113,26 @@ void Board::find_path()
 	Cell* p = goal;
 	
 
-	if (this->found)
+	if (found)
 	{
-		while (*p != *start)
+		while (p != nullptr)
 		{
-
-			if (p->get_color() != "GREEN" && p->get_color() != "RED")
+			//cout << &p << endl;
+			/*if (p->get_color() != "GREEN" && p->get_color() != "RED")
 			{
 				p->set_color(YELLOW, "YELLOW");
 
 				p->display_cell();
 
-			
-			}
+			}*/
+			p->set_color(YELLOW, "YELLOW");
 
+			p->display_cell();
 			p = p->parent;
 			
-
 		}
-
+		start->set_color(GREEN, "GREEN");
+		goal->set_color(RED, "RED");
 		
 	}
 	else
@@ -157,6 +158,7 @@ void Board::CLEAR_BOARD()
 		for (int c = 0; c < this->cols; c++)
 		{
 			blocks[r][c].parent = nullptr;
+			blocks[r][c].Hscore = 10000;
 			blocks[r][c].set_color(WHITE, "WHITE");
 			blocks[r][c].display_cell();
 		}
@@ -270,7 +272,7 @@ void Board::BreadthFirstSearch()
 
 
 			children.clear();
-			//_CrtDumpMemoryLeaks();
+			_CrtDumpMemoryLeaks();
 		}
 		else continue;
 	}
@@ -284,11 +286,12 @@ void Board::BreadthFirstSearch()
 
 void Board::Dijkstra()
 {
-	
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
 	auto compare = [](Cell* mine, Cell* other) {return mine->Hscore > other->Hscore; };
 	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
 
-	vector <Cell*> CLOSED;
+	
 	std::set <Cell*> visited;
 
 
@@ -318,13 +321,12 @@ void Board::Dijkstra()
 		if (CURRENT == goal)
 		{
 			found = true;
-
 			break;
 		}
 
 		else if (find(visited.begin(), visited.end(), CURRENT) == visited.end()) // if Current NOT in visited
 		{
-			cout << CURRENT->Hscore << " $" << endl;
+			//cout << CURRENT->Hscore << " $" << endl;
 			
 
 			int r_temp = CURRENT->row;
@@ -369,15 +371,15 @@ void Board::Dijkstra()
 				int new_dist = CURRENT->Hscore + weight;
 
 
-				cout <<"Q size: "<< OPEN.size() << " Current: " << CURRENT->Hscore << ", new dist: " << new_dist << ", weight: " << weight << endl;
+				//cout <<"Q size: "<< OPEN.size() << " Current: " << CURRENT->Hscore << ", new dist: " << new_dist << ", weight: " << weight << endl;
 				
 
 
-				if (child->color_string == "BLACK" || find(CLOSED.begin(), CLOSED.end(), child) != CLOSED.end()) { continue; }
+				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end()) { continue; }
 
-				else if (new_dist < child->Hscore && find(CLOSED.begin(), CLOSED.end(), child) == CLOSED.end())
+				else if (new_dist < child->Hscore && find(visited.begin(), visited.end(), child) == visited.end())
 				{
-					cout << "working" << endl;
+					//cout << "working" << endl;
 					child->Hscore = new_dist;
 
 					child->parent = CURRENT;
@@ -387,7 +389,7 @@ void Board::Dijkstra()
 
 					if (child->color_string != "RED" && child->color_string != "GREEN")
 					{
-						cout << "reached" << endl;
+						//cout << "reached" << endl;
 						child->set_color(SKYBLUE, "SKYBLUE");
 						child->display_cell();
 					}
@@ -402,6 +404,12 @@ void Board::Dijkstra()
 		else continue;
 		
 	}
+	//_CrtDumpMemoryLeaks();
+	visited.clear();
+	children.clear();
+
+	//while (!OPEN.empty()) OPEN.pop();
+	
 	find_path();
 }
 
@@ -493,7 +501,9 @@ void Board::RUN()
 
 Board::~Board()
 {
+	cout << "Board destructed" << endl;
 	delete[] blocks;
+	
 }
 
 

@@ -39,11 +39,11 @@ Cell::Cell(const Cell& obj)
 
 void Cell::set_color(Color c, string clr_str)
 {
-	this->color = c;
-	this->color_string = clr_str;
+	color = c;
+	color_string = clr_str;
 }
 
-string Cell::get_color() { return this->color_string; }
+string Cell::get_color() { return color_string; }
 
 void Cell::display_cell()
 {
