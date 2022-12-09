@@ -31,9 +31,10 @@ public:
 	int m_dist(Cell* other);
 	Cell& operator=(const Cell& other);
 	bool operator==(const Cell& other) const;
+	int operator - (Cell& other);
 	bool operator!=(const Cell& other) const;
 	bool operator < (const Cell& other) const;
 	bool operator > (const Cell& other) const;
-	int operator - (Cell& other);
+	
 	~Cell();
 };

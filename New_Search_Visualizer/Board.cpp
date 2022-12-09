@@ -110,7 +110,7 @@ void Board::set_goal()
 
 void Board::find_path()
 {
-	Cell* p = this->goal;
+	Cell* p = goal;
 	
 
 	if (this->found)
@@ -289,7 +289,8 @@ void Board::Dijkstra()
 	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
 
 	vector <Cell*> CLOSED;
-	vector <Cell*> visited;
+	std::set <Cell*> visited;
+
 
 	start->Hscore = 0;
 
@@ -311,12 +312,13 @@ void Board::Dijkstra()
 		OPEN.pop();
 
 
-		visited.push_back(CURRENT);
+		//visited.push_back(CURRENT);
 
 
 		if (CURRENT == goal)
 		{
 			found = true;
+
 			break;
 		}
 
@@ -359,33 +361,29 @@ void Board::Dijkstra()
 			for (Cell* child : children)
 			{
 
-				int real_dist = *start - *child;
+				//int child_dist = *start - *child;
 				int weight = CURRENT->m_dist(child);
+				int dist = CURRENT->m_dist(start);
+				//int new_dist = child_dist + weight;
 
-				int new_dist = real_dist + weight;
-
-
-				cout << new_dist << endl;
-				//assert(new_dist < child->Hscore);
+				int new_dist = CURRENT->Hscore + weight;
 
 
-				if (child->color_string == "BLACK") continue; // || find(CLOSED.begin(), CLOSED.end(), child) != CLOSED.end()) { continue; }
+				cout <<"Q size: "<< OPEN.size() << " Current: " << CURRENT->Hscore << ", new dist: " << new_dist << ", weight: " << weight << endl;
+				
 
-				else if (new_dist < CURRENT->Hscore && find(CLOSED.begin(), CLOSED.end(), child) == CLOSED.end())
+
+				if (child->color_string == "BLACK" || find(CLOSED.begin(), CLOSED.end(), child) != CLOSED.end()) { continue; }
+
+				else if (new_dist < child->Hscore && find(CLOSED.begin(), CLOSED.end(), child) == CLOSED.end())
 				{
 					cout << "working" << endl;
-					CURRENT->Hscore = new_dist;
+					child->Hscore = new_dist;
 
 					child->parent = CURRENT;
 
+					visited.insert(CURRENT);
 
-
-
-					/*if (child == goal)
-					{
-						found = true;
-						break;
-					}*/
 
 					if (child->color_string != "RED" && child->color_string != "GREEN")
 					{
@@ -398,6 +396,7 @@ void Board::Dijkstra()
 				else continue;
 
 			}
+			children.clear();
 
 		}
 		else continue;
