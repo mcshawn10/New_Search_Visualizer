@@ -409,7 +409,78 @@ void Board::Dijkstra()
 
 void Board::Astar()
 {
+	auto compare = [](Cell* mine, Cell* other) {return mine->Fscore > other->Fscore; };
+	priority_queue <Cell*, vector<Cell*>, decltype(compare)> open(compare);
 
+
+	std::set <Cell*> visited;
+
+
+	
+	for (int r = 0; r < 25; r++)
+	{
+		for (int c = 0; c < 60; c++)
+		{
+			open.push(&blocks[r][c]);
+		}
+	}
+
+	start->Hscore = start->m_dist(goal);
+	start->Gscore = 0;
+	start->Fscore = start->Gscore + start->Hscore;
+	//OPEN.push(start);
+
+	vector <Cell*> children;
+
+	while (!open.empty())
+	{
+		Cell* current = open.top();
+
+		if (current == goal)
+		{
+			found = true;
+			break;
+		}
+
+		else if (find(visited.begin(), visited.end(), current) == visited.end())
+		{
+			int r_temp = current->row;
+			int c_temp = current->col;
+
+			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
+			{
+				Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
+				children.push_back(temp_1); // COPY constructor, pass by reference
+
+			}
+
+			if (0 <= c_temp - 1)
+			{
+				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+				children.push_back(temp_3);
+
+			}
+
+			if (0 <= r_temp - 1)
+			{
+				Cell* temp_2 = &blocks[r_temp - 1][c_temp];
+				children.push_back(temp_2);
+
+			}
+
+			if (c_temp + 1 <= 59)
+			{
+				Cell* temp_4 = &blocks[r_temp][c_temp + 1];
+				children.push_back(temp_4);
+
+			}
+
+			for (auto child : children)
+			{
+
+			}
+		}
+	}
 }
 void Board::RUN()
 {

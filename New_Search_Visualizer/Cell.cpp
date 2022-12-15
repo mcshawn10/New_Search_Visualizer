@@ -13,9 +13,10 @@ Cell::Cell()
 	this->row = 0;
 	this->col = 0;
 	this->parent = nullptr;
-	Fscore = 0;
+	
 	Gscore = 0;
 	Hscore = 10000;
+	Fscore = Gscore + Hscore;
 
 }
 
@@ -61,6 +62,9 @@ Cell& Cell::operator=(const Cell& other)
 	this->counter = other.counter;
 	this->row = other.row;
 	this->col = other.col;
+	this->Fscore = other.Fscore;
+	this->Gscore = other.Gscore;
+	this->Hscore = other.Hscore;
 	this->color = other.color;
 	this->color_string = other.color_string;
 	this->parent = other.parent;

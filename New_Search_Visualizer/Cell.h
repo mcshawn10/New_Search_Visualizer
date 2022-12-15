@@ -15,9 +15,11 @@ public:
 	int counter = 0;
 	int row = 0;
 	int col = 0;
-	int Fscore;
+	
 	int Gscore;
 	int Hscore;
+
+	int Fscore;
 	Color color = WHITE;
 	string color_string = "WHITE";
 	Cell* parent;
