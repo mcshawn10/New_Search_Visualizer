@@ -65,6 +65,8 @@ Cell& Cell::operator=(const Cell& other)
 	this->color_string = other.color_string;
 	this->parent = other.parent;
 
+	//Cell* c = new Cell(*this);
+	//return c;
 	return *this;
 }
 

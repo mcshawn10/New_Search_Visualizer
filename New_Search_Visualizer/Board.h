@@ -41,6 +41,7 @@ public:
 	void find_path();
 	void BreadthFirstSearch();
 	void Dijkstra();
+	void Astar();
 	void set_start();
 	void set_goal();
 

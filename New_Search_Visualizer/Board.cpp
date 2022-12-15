@@ -314,6 +314,7 @@ void Board::Dijkstra()
 		if (CURRENT == goal)
 		{
 			found = true;
+			
 			break;
 		}
 
@@ -401,11 +402,15 @@ void Board::Dijkstra()
 	visited.clear();
 	children.clear();
 
-	//while (!OPEN.empty()) OPEN.pop();
+	while (!OPEN.empty()) OPEN.pop();
 	
 	find_path();
 }
 
+void Board::Astar()
+{
+
+}
 void Board::RUN()
 {
 	InitWindow(width, height, "New Search Algorithm Visualizer");
