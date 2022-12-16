@@ -10,6 +10,7 @@
 #include <set>
 #include <limits>
 #include <set>
+#include "PQ.h"
 //#include <Windows.h>
 
 
@@ -409,9 +410,10 @@ void Board::Dijkstra()
 
 void Board::Astar()
 {
-	auto compare = [](Cell* mine, Cell* other) {return mine->Fscore > other->Fscore; };
-	priority_queue <Cell*, vector<Cell*>, decltype(compare)> open(compare);
+	//auto compare = [](Cell* mine, Cell* other) {return mine->Fscore > other->Fscore; };
+	//PQ <Cell*, vector<Cell*>, decltype(compare)> open(compare);
 
+	PQ open;
 
 	std::set <Cell*> visited;
 
