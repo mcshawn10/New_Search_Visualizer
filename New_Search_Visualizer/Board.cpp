@@ -1,4 +1,4 @@
-#define _CRTDBG_MAP_ALLOC
+//#define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
 #include "raylib.h"
@@ -10,7 +10,8 @@
 #include <set>
 #include <limits>
 #include <set>
-#include "PQ.h"
+//#include "PQ.h"
+//#include <chrono>
 //#include <Windows.h>
 
 
@@ -180,7 +181,7 @@ void Board::CLEAR_SEARCH()
 
 void Board::BreadthFirstSearch()
 {
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 
 	
@@ -266,11 +267,11 @@ void Board::BreadthFirstSearch()
 
 
 			children.clear();
-			_CrtDumpMemoryLeaks();
+			
 		}
 		else continue;
 	}
-	find_path();
+	//find_path();
 
 	visited.clear();
 	children.clear();
@@ -281,7 +282,7 @@ void Board::BreadthFirstSearch()
 void Board::Dijkstra()
 {
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
+	//auto start_time = std::chrono::steady_clock::now();
 	auto compare = [](Cell* mine, Cell* other) {return mine->Hscore > other->Hscore; };
 	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
 
@@ -405,15 +406,20 @@ void Board::Dijkstra()
 
 	while (!OPEN.empty()) OPEN.pop();
 	
-	find_path();
+	//find_path();
+
+	//auto end_time = std::chrono::steady_clock::now();
+	//double duration = double(std::chrono::duration_cast <std::chrono::seconds>) (end_time - start_time).count();
+	//cout << duration << endl;
 }
+
 
 void Board::Astar()
 {
-	//auto compare = [](Cell* mine, Cell* other) {return mine->Fscore > other->Fscore; };
-	//PQ <Cell*, vector<Cell*>, decltype(compare)> open(compare);
+	auto compare = [](Cell* mine, Cell* other) {return mine->Fscore > other->Fscore; };
+	priority_queue <Cell*, vector<Cell*>, decltype(compare)> open(compare);
 
-	PQ open;
+	//PQ open;
 
 	std::set <Cell*> visited;
 

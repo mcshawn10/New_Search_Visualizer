@@ -2,12 +2,20 @@
 #include "Cell.h"
 
 
-bool PQ::operator(Cell* const& c1, Cell* const& c2)
+PQ::PQ()
+{
+
+}
+
+
+template<typename T>
+inline bool PQ<T>::operator()(Cell* const& c1, Cell* const& c2)
 {
 	return c1.height < c2.height;
 }
 
-bool PQ::remove(const T& value)
+template<typename T>
+bool PQ<T>::remove(const T& value)
 {
 	auto it = std::find(this->c.begin(), this->c.end(), value);
 
@@ -21,4 +29,10 @@ bool PQ::remove(const T& value)
 	}
 
 	return true;
+}
+
+template<typename T>
+PQ<T>::~PQ()
+{
+
 }
