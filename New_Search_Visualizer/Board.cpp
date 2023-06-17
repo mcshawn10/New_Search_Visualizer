@@ -316,7 +316,7 @@ void Board::Dijkstra()
 		if (CURRENT == goal)
 		{
 			found = true;
-			
+			while (!OPEN.empty()) { OPEN.pop(); }
 			break;
 		}
 
@@ -324,6 +324,7 @@ void Board::Dijkstra()
 		{
 			//cout << CURRENT->Hscore << " $" << endl;
 			
+			visited.insert(CURRENT);
 
 			int r_temp = CURRENT->row;
 			int c_temp = CURRENT->col;
@@ -406,11 +407,7 @@ void Board::Dijkstra()
 
 	while (!OPEN.empty()) OPEN.pop();
 	
-	//find_path();
-
-	//auto end_time = std::chrono::steady_clock::now();
-	//double duration = double(std::chrono::duration_cast <std::chrono::seconds>) (end_time - start_time).count();
-	//cout << duration << endl;
+	
 }
 
 
