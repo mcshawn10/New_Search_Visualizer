@@ -319,79 +319,90 @@ void Board::Dijkstra()
 			break;
 		}
 
-		else if (find(visited.begin(), visited.end(), CURRENT) == visited.end()) // if Current NOT in visited
+		else if (visited.find(CURRENT) == visited.end()) // if Current NOT in visited
 		{
 			//cout << CURRENT->Hscore << " $" << endl;
 			
-			visited.insert(CURRENT);
+			//visited.insert(CURRENT);
 
 			int r_temp = CURRENT->row;
 			int c_temp = CURRENT->col;
 
 			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
 			{
-				Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
-				children.push_back(temp_1); // COPY constructor, pass by reference
+				//Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
+				children.push_back(&blocks[r_temp + 1][c_temp]); // COPY constructor, pass by reference
 
 			}
 
 			if (0 <= c_temp - 1)
 			{
-				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
-				children.push_back(temp_3);
+				//Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+				children.push_back(&blocks[r_temp][c_temp - 1]);
 
 			}
 
 			if (0 <= r_temp - 1)
 			{
-				Cell* temp_2 = &blocks[r_temp - 1][c_temp];
-				children.push_back(temp_2);
+				//Cell* temp_2 = &blocks[r_temp - 1][c_temp];
+				children.push_back(&blocks[r_temp - 1][c_temp]);
 
 			}
 
 			if (c_temp + 1 <= 59)
 			{
-				Cell* temp_4 = &blocks[r_temp][c_temp + 1];
-				children.push_back(temp_4);
+				//Cell* temp_4 = &blocks[r_temp][c_temp + 1];
+				children.push_back(&blocks[r_temp][c_temp + 1]);
 
 			}
 
+			int current_distance = CURRENT->m_dist(start);
 			for (Cell* child : children)
 			{
 
 				
 				int weight = CURRENT->m_dist(child);
-				int CURRENTs_distance_to_start = CURRENT->m_dist(start);
+				//int CURRENTs_distance_to_start = CURRENT->m_dist(start);
+				
 				
 
-				int new_dist = CURRENT->Hscore + weight;
+				//int new_dist = CURRENT->Hscore + weight;
 
+				int new_dist = current_distance + weight;
 
+				/*
+				* for each neighbor in neighbors(current):
+					distance_to_neighbor = distance[current] + weight(current, neighbor)
+					if distance_to_neighbor < distance[neighbor]:
+						distance[neighbor] = distance_to_neighbor
+				*/
 
-				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end()) { continue; }
+				if (child->color_string == "BLACK" || visited.find(child) != visited.end() || child == goal) { continue; }
 
-				else if (new_dist < child->Hscore && find(visited.begin(), visited.end(), child) == visited.end())
+				else if (new_dist < child->Hscore && visited.find(child) == visited.end())
 				{
 					//cout << "working" << endl;
 					child->Hscore = new_dist;
 
 					child->parent = CURRENT;
 
-					visited.insert(CURRENT);
+					
 
-
+					
 					if (child->color_string != "RED" && child->color_string != "GREEN")
 					{
+						visited.insert(CURRENT);
 						//cout << "reached" << endl;
 						child->set_color(SKYBLUE, "SKYBLUE");
 						child->display_cell();
 					}
+					
 				}
 
 				else continue;
-
+				children.clear();
 			}
-			children.clear();
+			
 
 		}
 		else continue;
