@@ -281,8 +281,7 @@ void Board::BreadthFirstSearch()
 
 void Board::Dijkstra()
 {
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//auto start_time = std::chrono::steady_clock::now();
+	
 	auto compare = [](Cell* mine, Cell* other) {return mine->Hscore > other->Hscore; };
 	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
 
@@ -360,16 +359,13 @@ void Board::Dijkstra()
 			for (Cell* child : children)
 			{
 
-				//int child_dist = *start - *child;
+				
 				int weight = CURRENT->m_dist(child);
-				int dist = CURRENT->m_dist(start);
-				//int new_dist = child_dist + weight;
+				int CURRENTs_distance_to_start = CURRENT->m_dist(start);
+				
 
 				int new_dist = CURRENT->Hscore + weight;
 
-
-				//cout <<"Q size: "<< OPEN.size() << " Current: " << CURRENT->Hscore << ", new dist: " << new_dist << ", weight: " << weight << endl;
-				
 
 
 				if (child->color_string == "BLACK" || find(visited.begin(), visited.end(), child) != visited.end()) { continue; }
@@ -401,7 +397,7 @@ void Board::Dijkstra()
 		else continue;
 		
 	}
-	//_CrtDumpMemoryLeaks();
+	
 	visited.clear();
 	children.clear();
 
