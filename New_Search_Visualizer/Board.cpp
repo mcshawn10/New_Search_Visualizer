@@ -158,6 +158,8 @@ void Board::CLEAR_BOARD()
 			blocks[r][c].display_cell();
 		}
 	}
+	start = nullptr;
+	goal = nullptr;
 }
 
 void Board::CLEAR_SEARCH()
@@ -299,8 +301,6 @@ void Board::Dijkstra()
 	std::set <Cell*> visited;
 
 
-	start->Hscore = 0;
-	OPEN.push(start);
 
 	for (int r = 0; r < 25; r++)
 	{
@@ -311,6 +311,9 @@ void Board::Dijkstra()
 		}
 	}
 
+	start->Hscore = 0;
+	OPEN.push(start);
+
 
 	vector <Cell*> children;
 	Cell* CURRENT = nullptr;
@@ -320,6 +323,7 @@ void Board::Dijkstra()
 		CURRENT = OPEN.top();		
 		OPEN.pop();
 
+		visited.insert(CURRENT);
 
 		if (CURRENT == goal)
 		{
@@ -328,7 +332,7 @@ void Board::Dijkstra()
 			//break;
 		}
 
-		else if (visited.find(CURRENT) == visited.end()) // if Current NOT in visited
+		else if (!found) // if Current NOT in visited visited.find(CURRENT) == visited.end()
 		{
 			
 			
@@ -381,16 +385,17 @@ void Board::Dijkstra()
 
 				if (child->color_string == "BLACK" || visited.find(child) != visited.end() || child == goal) { continue; }
 
-				else if (new_dist < child->Hscore) //&& visited.find(child) == visited.end())
+				else if (new_dist < child->Hscore && visited.find(child) == visited.end()) //
 				{
 					//cout << "working" << endl;
 					child->Hscore = new_dist;
 
 					child->parent = CURRENT;
 					OPEN.push(child);
+
 					if (child == goal)
 					{
-						found = true;
+ 						found = true;
 						break;
 					}
 					if (child->color_string != "RED" && child->color_string != "GREEN")
