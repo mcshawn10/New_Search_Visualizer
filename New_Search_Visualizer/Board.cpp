@@ -295,6 +295,7 @@ void Board::Dijkstra()
 	{
 		for (int c = 0; c < 60; c++)
 		{
+			blocks[r][c].Hscore = 100000;
 			OPEN.push(&blocks[r][c]);
 		}
 	}
@@ -302,10 +303,11 @@ void Board::Dijkstra()
 	//OPEN.push(start);
 
 	vector <Cell*> children;
+	Cell* CURRENT = nullptr;
 
 	while (!OPEN.empty())
 	{
-		Cell* CURRENT = OPEN.top();		
+		CURRENT = OPEN.top();		
 		OPEN.pop();
 
 
@@ -316,7 +318,7 @@ void Board::Dijkstra()
 		{
 			found = true;
 			while (!OPEN.empty()) { OPEN.pop(); }
-			break;
+			//break;
 		}
 
 		else if (visited.find(CURRENT) == visited.end()) // if Current NOT in visited
@@ -379,7 +381,7 @@ void Board::Dijkstra()
 
 				if (child->color_string == "BLACK" || visited.find(child) != visited.end() || child == goal) { continue; }
 
-				else if (new_dist < child->Hscore && visited.find(child) == visited.end())
+				else if (new_dist < child->Hscore) //&& visited.find(child) == visited.end())
 				{
 					//cout << "working" << endl;
 					child->Hscore = new_dist;
@@ -400,8 +402,9 @@ void Board::Dijkstra()
 				}
 
 				else continue;
-				children.clear();
+				
 			}
+			children.clear();
 			
 
 		}
