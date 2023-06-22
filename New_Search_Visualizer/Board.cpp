@@ -282,25 +282,35 @@ void Board::BreadthFirstSearch()
 void Board::Dijkstra()
 {
 	
-	auto compare = [](Cell* mine, Cell* other) {return mine->Hscore > other->Hscore; };
-	priority_queue <Cell*, vector<Cell*>, decltype(compare)> OPEN(compare);
+	auto compare = [](Cell* mine, Cell* other) 
+	{
+		if (mine->Hscore > other->Hscore || other->Hscore > mine->Hscore)
+		{
+			return mine->Hscore > other->Hscore;
+		}
+		else
+		{
+			return mine->counter > other->counter;
+		}
+	};
+	priority_queue <Cell*, vector<Cell*>, decltype(compare) > OPEN(compare);
 
 	
 	std::set <Cell*> visited;
 
 
 	start->Hscore = 0;
+	OPEN.push(start);
 
 	for (int r = 0; r < 25; r++)
 	{
 		for (int c = 0; c < 60; c++)
 		{
 			blocks[r][c].Hscore = 100000;
-			OPEN.push(&blocks[r][c]);
+			//OPEN.push(&blocks[r][c]);
 		}
 	}
 
-	//OPEN.push(start);
 
 	vector <Cell*> children;
 	Cell* CURRENT = nullptr;
@@ -309,9 +319,6 @@ void Board::Dijkstra()
 	{
 		CURRENT = OPEN.top();		
 		OPEN.pop();
-
-
-		//visited.push_back(CURRENT);
 
 
 		if (CURRENT == goal)
@@ -323,7 +330,7 @@ void Board::Dijkstra()
 
 		else if (visited.find(CURRENT) == visited.end()) // if Current NOT in visited
 		{
-			//cout << CURRENT->Hscore << " $" << endl;
+			
 			
 			//visited.insert(CURRENT);
 
@@ -362,14 +369,7 @@ void Board::Dijkstra()
 			for (Cell* child : children)
 			{
 
-				
 				int weight = CURRENT->m_dist(child);
-				//int CURRENTs_distance_to_start = CURRENT->m_dist(start);
-				
-				
-
-				//int new_dist = CURRENT->Hscore + weight;
-
 				int new_dist = current_distance + weight;
 
 				/*
@@ -387,13 +387,15 @@ void Board::Dijkstra()
 					child->Hscore = new_dist;
 
 					child->parent = CURRENT;
-
-					
-
-					
+					OPEN.push(child);
+					if (child == goal)
+					{
+						found = true;
+						break;
+					}
 					if (child->color_string != "RED" && child->color_string != "GREEN")
 					{
-						visited.insert(CURRENT);
+						//visited.insert(CURRENT);
 						//cout << "reached" << endl;
 						child->set_color(SKYBLUE, "SKYBLUE");
 						child->display_cell();
