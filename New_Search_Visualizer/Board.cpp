@@ -114,12 +114,13 @@ void Board::find_path()
 {
 	//Cell* p = new Cell(*goal);
 	Cell* p = goal;
+	int path_length = 0;
 	assert(p != nullptr);
 	if (found)
 	{
 		while (p != nullptr)
 		{
-			
+			path_length++;
 			p->set_color(YELLOW, "YELLOW");
 
 			p->display_cell();
@@ -129,6 +130,7 @@ void Board::find_path()
 		start->set_color(GREEN, "GREEN");
 		goal->set_color(RED, "RED");
 		
+		cout << "Path length: " << path_length << endl;
 	}
 	else
 	{
@@ -273,7 +275,7 @@ void Board::BreadthFirstSearch()
 		}
 		else continue;
 	}
-	//find_path();
+	find_path();
 
 	visited.clear();
 	children.clear();
@@ -334,38 +336,32 @@ void Board::Dijkstra()
 		}
 
 		
-		
-			
-			
-		//visited.insert(CURRENT);
 
 		int r_temp = CURRENT->row;
 		int c_temp = CURRENT->col;
 
 		if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
 		{
-			//Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
+			
 			children.push_back(&blocks[r_temp + 1][c_temp]); // COPY constructor, pass by reference
 
 		}
 
 		if (0 <= c_temp - 1)
 		{
-			//Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+			
 			children.push_back(&blocks[r_temp][c_temp - 1]);
 
 		}
 
 		if (0 <= r_temp - 1)
 		{
-			//Cell* temp_2 = &blocks[r_temp - 1][c_temp];
 			children.push_back(&blocks[r_temp - 1][c_temp]);
 
 		}
 
 		if (c_temp + 1 <= 59)
 		{
-			//Cell* temp_4 = &blocks[r_temp][c_temp + 1];
 			children.push_back(&blocks[r_temp][c_temp + 1]);
 
 		}
@@ -385,7 +381,7 @@ void Board::Dijkstra()
 
 			else if (new_dist < child->Hscore && visited.find(child) == visited.end()) //
 			{
-				//cout << "working" << endl;
+				
 				child->Hscore = new_dist;
 
 				child->parent = CURRENT;
@@ -398,8 +394,7 @@ void Board::Dijkstra()
 				}
 				if (child->color_string != "RED" && child->color_string != "GREEN")
 				{
-					//visited.insert(CURRENT);
-					//cout << "reached" << endl;
+
 					child->set_color(SKYBLUE, "SKYBLUE");
 					child->display_cell();
 				}
@@ -409,16 +404,15 @@ void Board::Dijkstra()
 			
 		}
 		children.clear();
-			
-
-		
-		
+					
 	}
 	
 	visited.clear();
 	children.clear();
 
-	while (!OPEN.empty()) OPEN.pop();
+	while (!OPEN.empty()) OPEN.pop(); 
+
+	find_path();
 	
 	
 }
