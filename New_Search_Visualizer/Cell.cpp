@@ -76,7 +76,7 @@ Cell& Cell::operator=(const Cell& other)
 
 bool Cell::operator==(const Cell& other) const
 {
-	if (this->row == other.row && this->col == other.col && this->parent == other.parent) return true;
+	if (this->row == other.row && this->col == other.col) return true;
 	else return false;
 }
 

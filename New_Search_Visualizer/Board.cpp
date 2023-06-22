@@ -317,9 +317,10 @@ void Board::Dijkstra()
 
 	vector <Cell*> children;
 	Cell* CURRENT = nullptr;
-
+	int i = 0;
 	while (!OPEN.empty())
 	{
+		i++;
 		CURRENT = OPEN.top();		
 		OPEN.pop();
 
@@ -332,90 +333,85 @@ void Board::Dijkstra()
 			//break;
 		}
 
-		else if (!found) // if Current NOT in visited visited.find(CURRENT) == visited.end()
+		
+		
+			
+			
+		//visited.insert(CURRENT);
+
+		int r_temp = CURRENT->row;
+		int c_temp = CURRENT->col;
+
+		if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
 		{
-			
-			
-			//visited.insert(CURRENT);
-
-			int r_temp = CURRENT->row;
-			int c_temp = CURRENT->col;
-
-			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
-			{
-				//Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
-				children.push_back(&blocks[r_temp + 1][c_temp]); // COPY constructor, pass by reference
-
-			}
-
-			if (0 <= c_temp - 1)
-			{
-				//Cell* temp_3 = &blocks[r_temp][c_temp - 1];
-				children.push_back(&blocks[r_temp][c_temp - 1]);
-
-			}
-
-			if (0 <= r_temp - 1)
-			{
-				//Cell* temp_2 = &blocks[r_temp - 1][c_temp];
-				children.push_back(&blocks[r_temp - 1][c_temp]);
-
-			}
-
-			if (c_temp + 1 <= 59)
-			{
-				//Cell* temp_4 = &blocks[r_temp][c_temp + 1];
-				children.push_back(&blocks[r_temp][c_temp + 1]);
-
-			}
-
-			int current_distance = CURRENT->m_dist(start);
-			for (Cell* child : children)
-			{
-
-				int weight = CURRENT->m_dist(child);
-				int new_dist = current_distance + weight;
-
-				/*
-				* for each neighbor in neighbors(current):
-					distance_to_neighbor = distance[current] + weight(current, neighbor)
-					if distance_to_neighbor < distance[neighbor]:
-						distance[neighbor] = distance_to_neighbor
-				*/
-
-				if (child->color_string == "BLACK" || visited.find(child) != visited.end() || child == goal) { continue; }
-
-				else if (new_dist < child->Hscore && visited.find(child) == visited.end()) //
-				{
-					//cout << "working" << endl;
-					child->Hscore = new_dist;
-
-					child->parent = CURRENT;
-					OPEN.push(child);
-
-					if (child == goal)
-					{
- 						found = true;
-						break;
-					}
-					if (child->color_string != "RED" && child->color_string != "GREEN")
-					{
-						//visited.insert(CURRENT);
-						//cout << "reached" << endl;
-						child->set_color(SKYBLUE, "SKYBLUE");
-						child->display_cell();
-					}
-					
-				}
-
-				else continue;
-				
-			}
-			children.clear();
-			
+			//Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
+			children.push_back(&blocks[r_temp + 1][c_temp]); // COPY constructor, pass by reference
 
 		}
-		else continue;
+
+		if (0 <= c_temp - 1)
+		{
+			//Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+			children.push_back(&blocks[r_temp][c_temp - 1]);
+
+		}
+
+		if (0 <= r_temp - 1)
+		{
+			//Cell* temp_2 = &blocks[r_temp - 1][c_temp];
+			children.push_back(&blocks[r_temp - 1][c_temp]);
+
+		}
+
+		if (c_temp + 1 <= 59)
+		{
+			//Cell* temp_4 = &blocks[r_temp][c_temp + 1];
+			children.push_back(&blocks[r_temp][c_temp + 1]);
+
+		}
+
+		int current_distance = CURRENT->m_dist(start);
+		for (Cell* child : children)
+		{
+
+			int weight = CURRENT->m_dist(child);
+			int new_dist = current_distance + weight;
+
+
+			if (child->color_string == "BLACK" || visited.find(child) != visited.end())
+			{
+				continue; 
+			}
+
+			else if (new_dist < child->Hscore && visited.find(child) == visited.end()) //
+			{
+				//cout << "working" << endl;
+				child->Hscore = new_dist;
+
+				child->parent = CURRENT;
+				OPEN.push(child);
+
+				if (child == goal)
+				{
+ 					found = true;
+					break;
+				}
+				if (child->color_string != "RED" && child->color_string != "GREEN")
+				{
+					//visited.insert(CURRENT);
+					//cout << "reached" << endl;
+					child->set_color(SKYBLUE, "SKYBLUE");
+					child->display_cell();
+				}
+					
+			}
+
+			
+		}
+		children.clear();
+			
+
+		
 		
 	}
 	
