@@ -288,6 +288,7 @@ void Board::Dijkstra()
 	
 	auto compare = [](Cell* mine, Cell* other) 
 	{
+		/*
 		if (mine->Hscore > other->Hscore || other->Hscore > mine->Hscore)
 		{
 			return mine->Hscore > other->Hscore;
@@ -296,6 +297,8 @@ void Board::Dijkstra()
 		{
 			return mine->counter > other->counter;
 		}
+		*/
+		return mine->Hscore > other->Hscore;
 	};
 	priority_queue <Cell*, vector<Cell*>, decltype(compare) > OPEN(compare);
 
@@ -319,10 +322,10 @@ void Board::Dijkstra()
 
 	vector <Cell*> children;
 	Cell* CURRENT = nullptr;
-	int i = 0;
+	
 	while (!OPEN.empty())
 	{
-		i++;
+		
 		CURRENT = OPEN.top();		
 		OPEN.pop();
 
@@ -367,6 +370,7 @@ void Board::Dijkstra()
 		}
 
 		int current_distance = CURRENT->m_dist(start);
+
 		for (Cell* child : children)
 		{
 
@@ -379,7 +383,7 @@ void Board::Dijkstra()
 				continue; 
 			}
 
-			else if (new_dist < child->Hscore && visited.find(child) == visited.end()) //
+			else if (new_dist < child->Hscore && visited.find(child) == visited.end()) // child not in visited
 			{
 				
 				child->Hscore = new_dist;
@@ -426,6 +430,7 @@ void Board::Astar()
 	//PQ open;
 
 	std::set <Cell*> visited;
+	std::set <Cell*> open_list;
 
 
 	
@@ -433,15 +438,19 @@ void Board::Astar()
 	{
 		for (int c = 0; c < 60; c++)
 		{
+			blocks[r][c].Hscore = 0;
+			blocks[r][c].Gscore = 0;
 			open.push(&blocks[r][c]);
+			
 		}
 	}
 
-	start->Hscore = start->m_dist(goal);
+	start->Hscore = 1000000;
 	start->Gscore = 0;
 	start->Fscore = start->Gscore + start->Hscore;
-	//OPEN.push(start);
-
+	
+	open.push(start);
+	open_list.insert(start);
 	vector <Cell*> children;
 
 	while (!open.empty())
@@ -486,10 +495,44 @@ void Board::Astar()
 				children.push_back(temp_4);
 
 			}
-
+			
 			for (auto child : children)
 			{
+				int new_gScore = current->Gscore + 1; 
 
+				child->Hscore = child->m_dist(goal);
+
+				if (child->color_string == "BLACK" || visited.find(child) != visited.end())
+				{
+					continue;
+				}
+
+				if (child->Gscore < current->Gscore && visited.find(child) == visited.end()) //	if child has lower g score than current and is in visited 
+				{
+					child->Gscore = new_gScore;
+					child->parent = current;
+
+				}
+
+				else if (new_gScore < child->Gscore && open_list.find(child) != open_list.end()) // remove child from open queue and from open list
+				{
+					child->Gscore = current
+				}
+
+
+				
+
+					if (child->color_string != "RED" && child->color_string != "GREEN")
+					{
+
+						child->set_color(SKYBLUE, "SKYBLUE");
+						child->display_cell();
+					}
+
+				
+
+
+				
 			}
 		}
 	}
