@@ -411,15 +411,15 @@ void Board::Dijkstra()
 		children.clear();
 					
 	}
-	
+
 	visited.clear();
 	children.clear();
 
-	while (!OPEN.empty()) OPEN.pop(); 
+	while (!OPEN.empty()) OPEN.pop();
 
 	find_path();
-	
-	
+
+
 }
 
 
@@ -428,39 +428,37 @@ void Board::Astar()
 	auto compare = [](Cell* mine, Cell* other) {return mine->Fscore > other->Fscore; };
 	priority_queue <Cell*, vector<Cell*>, decltype(compare)> open(compare);
 
-	//PQ open;
 
 	std::set <Cell*> visited;
 	std::list <Cell*> open_list;
 
-
-	
 	for (int r = 0; r < 25; r++)
 	{
 		for (int c = 0; c < 60; c++)
 		{
-			blocks[r][c].Hscore = 0;
-			blocks[r][c].Gscore = 0;
-			open.push(&blocks[r][c]);
-			
+			blocks[r][c].Hscore = blocks[r][c].m_dist(goal);
+			blocks[r][c].Gscore = 10000;
+
 		}
 	}
 
-	start->Hscore = 1000000;
+	//start->Hscore = 1000000;
 	start->Gscore = 0;
 	start->Fscore = start->Gscore + start->Hscore;
-	
+
 	open.push(start);
-	open_list.push_back(start);
-	
 	vector <Cell*> children;
+	Cell* current = nullptr;
+
 
 	while (!open.empty())
 	{
-		Cell* current = open.top();
+		current = open.top();
 		open.pop();
-		open_list.remove(start);
+
 		visited.insert(current);
+		open_list.push_back(current);
+
 
 		if (current == goal)
 		{
@@ -468,78 +466,56 @@ void Board::Astar()
 			break;
 		}
 
-		else if (find(visited.begin(), visited.end(), current) == visited.end())
+		int r_temp = current->row;
+		int c_temp = current->col;
+
+		if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
 		{
-			int r_temp = current->row;
-			int c_temp = current->col;
+			//Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
+			children.push_back(&blocks[r_temp + 1][c_temp]); // COPY constructor, pass by reference
 
-			if (r_temp + 1 <= 24) // HOW TO ACCESS THE ORIGINAL
-			{
-				Cell* temp_1 = &blocks[r_temp + 1][c_temp]; // temp is uninitialized?
-				children.push_back(temp_1); // COPY constructor, pass by reference
-
-			}
-
-			if (0 <= c_temp - 1)
-			{
-				Cell* temp_3 = &blocks[r_temp][c_temp - 1];
-				children.push_back(temp_3);
-
-			}
-
-			if (0 <= r_temp - 1)
-			{
-				Cell* temp_2 = &blocks[r_temp - 1][c_temp];
-				children.push_back(temp_2);
-
-			}
-
-			if (c_temp + 1 <= 59)
-			{
-				Cell* temp_4 = &blocks[r_temp][c_temp + 1];
-				children.push_back(temp_4);
-
-			}
-			int new_gScore = current->Gscore + 1;
-	
-			for (auto child : children)
-			{
-
-				child->Hscore = child->m_dist(goal);
-
-				if (child->color_string == "BLACK" || visited.find(child) != visited.end())
-				{
-					continue;
-				}
-
-				else if (std::find(open_list.begin(), open_list.end(), child) == open_list.end())
-				{
-					open_list.push_back(child);
-					open.push(child);
-				}
-
-				else if (new_gScore < child->Gscore && std::find(open_list.begin(), open_list.end(), child) != open_list.end()) // remove child from open queue and from open list
-				{
-					child->Gscore = new_gScore;
-					child->parent = current;
-					//child->Hscore = child->m_dist(goal);
-
-					child->Fscore = child->Gscore + child->Hscore;
-
-					if (child->color_string != "RED" && child->color_string != "GREEN")
-					{
-
-						child->set_color(SKYBLUE, "SKYBLUE");
-						child->display_cell();
-					}
-
-				}
-
-
-			}
-			children.clear();
 		}
+
+		if (0 <= c_temp - 1)
+		{
+			//Cell* temp_3 = &blocks[r_temp][c_temp - 1];
+			children.push_back(&blocks[r_temp][c_temp - 1]);
+
+		}
+
+		if (0 <= r_temp - 1)
+		{
+			//Cell* temp_2 = &blocks[r_temp - 1][c_temp];
+			children.push_back(&blocks[r_temp - 1][c_temp]);
+
+		}
+
+		if (c_temp + 1 <= 59)
+		{
+			//deCell* temp_4 = &blocks[r_temp][c_temp + 1];
+			children.push_back(&blocks[r_temp][c_temp + 1]);
+
+		}
+
+		int new_gScore = current->Gscore + 1;
+
+		for (auto child : children)
+		{
+
+			child->Fscore = child->Gscore + child->Hscore;
+
+			if (child->color_string == "BLACK")
+			{
+				continue;
+			}
+
+		}
+		children.clear();
+		
 	}
+	visited.clear();
+	open_list.clear();
+
 }
 void Board::RUN()
 {
@@ -582,7 +558,7 @@ void Board::RUN()
 			if (CheckCollisionPointRec(GetMousePosition(), button_list[i].textbox)) button_list[i].mouseOn = true;
 			else  button_list[i].mouseOn = false;
 		}
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			if (button_list[i].mouseOn)
 			{
@@ -612,7 +588,7 @@ void Board::RUN()
 
 			else if (CheckCollisionPointRec(GetMousePosition(), button_list[5].textbox)) this->BreadthFirstSearch();
 
-			else if (CheckCollisionPointRec(GetMousePosition(), button_list[5].textbox)) this->Astar();
+			else if (CheckCollisionPointRec(GetMousePosition(), button_list[6].textbox)) this->Astar();
 		}
 
 
