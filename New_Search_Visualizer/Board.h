@@ -23,6 +23,7 @@ private:
 	Button clear_search;
 	Button D_button;
 	Button BFS_button;
+	Button Astar_button;
 
 public:
 

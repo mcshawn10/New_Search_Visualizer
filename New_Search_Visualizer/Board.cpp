@@ -35,6 +35,7 @@ Board::Board()
 	clear_search = Button("Clear Search", 800, 100, 350, 50);
 	D_button = Button("Dijkstra", 400, 150, 250, 50);
 	BFS_button = Button("BFS", 700, 150, 250, 50);
+	Astar_button = Button("A*", 100, 150, 250, 50);
 
 	for (int row = 0;row<this->rows; row++)
 	{
@@ -430,7 +431,7 @@ void Board::Astar()
 	//PQ open;
 
 	std::set <Cell*> visited;
-	std::set <Cell*> open_list;
+	std::list <Cell*> open_list;
 
 
 	
@@ -450,12 +451,16 @@ void Board::Astar()
 	start->Fscore = start->Gscore + start->Hscore;
 	
 	open.push(start);
-	open_list.insert(start);
+	open_list.push_back(start);
+	
 	vector <Cell*> children;
 
 	while (!open.empty())
 	{
 		Cell* current = open.top();
+		open.pop();
+		open_list.remove(start);
+		visited.insert(current);
 
 		if (current == goal)
 		{
@@ -495,10 +500,10 @@ void Board::Astar()
 				children.push_back(temp_4);
 
 			}
-			
+			int new_gScore = current->Gscore + 1;
+	
 			for (auto child : children)
 			{
-				int new_gScore = current->Gscore + 1; 
 
 				child->Hscore = child->m_dist(goal);
 
@@ -507,20 +512,19 @@ void Board::Astar()
 					continue;
 				}
 
-				if (child->Gscore < current->Gscore && visited.find(child) == visited.end()) //	if child has lower g score than current and is in visited 
+				else if (std::find(open_list.begin(), open_list.end(), child) == open_list.end())
+				{
+					open_list.push_back(child);
+					open.push(child);
+				}
+
+				else if (new_gScore < child->Gscore && std::find(open_list.begin(), open_list.end(), child) != open_list.end()) // remove child from open queue and from open list
 				{
 					child->Gscore = new_gScore;
 					child->parent = current;
+					//child->Hscore = child->m_dist(goal);
 
-				}
-
-				else if (new_gScore < child->Gscore && open_list.find(child) != open_list.end()) // remove child from open queue and from open list
-				{
-					child->Gscore = current
-				}
-
-
-				
+					child->Fscore = child->Gscore + child->Hscore;
 
 					if (child->color_string != "RED" && child->color_string != "GREEN")
 					{
@@ -529,11 +533,11 @@ void Board::Astar()
 						child->display_cell();
 					}
 
-				
+				}
 
 
-				
 			}
+			children.clear();
 		}
 	}
 }
@@ -542,7 +546,7 @@ void Board::RUN()
 	InitWindow(width, height, "New Search Algorithm Visualizer");
 	SetTargetFPS(fps);
 
-	Button button_list[6] = { this->start_button, this->goal_button, this->clear_board, this->clear_search, this->D_button, this->BFS_button };
+	Button button_list[7] = { this->start_button, this->goal_button, this->clear_board, this->clear_search, this->D_button, this->BFS_button, this->Astar_button };
 
 	while (!WindowShouldClose()) // while loop that controls the rest
 	{
@@ -569,8 +573,11 @@ void Board::RUN()
 		this->BFS_button.draw_box();
 		this->BFS_button.draw_text();
 
+		this->Astar_button.draw_box();
+		this->Astar_button.draw_text();
+
 		///*
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 7; i++)
 		{
 			if (CheckCollisionPointRec(GetMousePosition(), button_list[i].textbox)) button_list[i].mouseOn = true;
 			else  button_list[i].mouseOn = false;
@@ -604,6 +611,8 @@ void Board::RUN()
 			else if (CheckCollisionPointRec(GetMousePosition(), button_list[4].textbox)) this->Dijkstra();
 
 			else if (CheckCollisionPointRec(GetMousePosition(), button_list[5].textbox)) this->BreadthFirstSearch();
+
+			else if (CheckCollisionPointRec(GetMousePosition(), button_list[5].textbox)) this->Astar();
 		}
 
 
