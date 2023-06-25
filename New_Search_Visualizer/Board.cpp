@@ -449,16 +449,16 @@ void Board::Astar()
 	open.push(start);
 	vector <Cell*> children;
 	Cell* current = nullptr;
-
+	open_list.push_back(start);
 
 	while (!open.empty())
 	{
 		current = open.top();
 		open.pop();
 
-		visited.insert(current);
-		open_list.push_back(current);
+		open_list.remove(current);
 
+		visited.insert(current);
 
 		if (current == goal)
 		{
@@ -497,16 +497,41 @@ void Board::Astar()
 
 		}
 
-		int new_gScore = current->Gscore + 1;
+		 
 
 		for (auto child : children)
 		{
 
-			child->Fscore = child->Gscore + child->Hscore;
+			int cost_to_reach_child = current->Gscore + current->m_dist(child);
 
-			if (child->color_string == "BLACK")
+			if (child->color_string == "BLACK" || visited.find(child) != visited.end())
 			{
 				continue;
+			}
+
+			// if new path to child is shorter || neighbor not in open
+			if (cost_to_reach_child < child->Gscore || std::find(open_list.begin(), open_list.end(), child) == open_list.end())
+			{
+				child->Hscore = child->m_dist(goal); // MUST be
+				child->Gscore = cost_to_reach_child; // ?
+				child->Fscore = child->Gscore + child->Hscore;
+
+				child->parent = current;
+				
+				if (std::find(open_list.begin(), open_list.end(), child) == open_list.end())
+				{
+					open.push(child);
+					open_list.push_back(child);
+				}
+
+				if (child->color_string != "RED" && child->color_string != "GREEN")
+				{
+
+					child->set_color(SKYBLUE, "SKYBLUE");
+					child->display_cell();
+				}
+
+
 			}
 
 		}
@@ -515,6 +540,8 @@ void Board::Astar()
 	}
 	visited.clear();
 	open_list.clear();
+
+	find_path();
 
 }
 void Board::RUN()
